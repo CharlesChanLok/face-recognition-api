@@ -1,0 +1,2 @@
+web: knex migrate:latest &&
+nodemon --watch '**/*.ts' --exec 'ts-node' src/index.ts
