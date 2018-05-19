@@ -27,6 +27,7 @@ const userService = new UserService(pg);
 const userRouter = new UserRouter(userService);
 const apiClarifaiRouter = new ApiClarifaiRouter();
 
+app.get('/', (req, res) => res.send('running'));
 app.use('/users', userRouter.getRouter());
 app.use('/api/clarifai', apiClarifaiRouter.getRouter());
 
