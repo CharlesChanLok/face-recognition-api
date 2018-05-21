@@ -12,6 +12,15 @@ class UserRouter {
         this.userService = userService;
     }
 
+    private isValidPassword = (pass: string) => {
+        return pass.length >= 8 && pass.length <= 64;
+    }
+
+    private isValidEmail = (email: string) => {
+        return (/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+            .test(email);
+    }
+
     getRouter = () => {
         const router = express.Router();
         router.post('/signin', this.handleSignIn);
@@ -23,7 +32,9 @@ class UserRouter {
 
     handleSignUp = async (req: Request, res: Response) => {
         const { name, email, password } = req.body;
-        if (name && email && password) {
+        if (name &&
+            this.isValidEmail(email) &&
+            this.isValidPassword(password)) {
             try {
                 const user = await this.userService.userSignUp(name, email, password);
                 return res.json(user);
