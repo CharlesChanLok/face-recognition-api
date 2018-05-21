@@ -31,6 +31,11 @@ app.get('/', (req, res) => res.send('running'));
 app.use('/users', userRouter.getRouter());
 app.use('/api/clarifai', apiClarifaiRouter.getRouter());
 
+//Error handler
+app.use((req, res, next) => {
+    res.status(404).json('Not Found');
+})
+
 app.listen(PORT, () => {
     console.log('Listening on port:', PORT)
 });
