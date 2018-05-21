@@ -18,8 +18,6 @@ class UserService {
         return this.db('users')
             .select('*')
             .where('id', '=', id);
-
-
     }
 
     userSignUp = (name: string, email: string, password: string) => {
@@ -55,9 +53,7 @@ class UserService {
             const isValidPassword = await bcrypt.compare(password, userHash[0].hash);
             if (isValidPassword) {
                 try {
-                    const user = await this.db('users')
-                        .select('*')
-                        .where('id', '=', userHash[0].id);
+                    const user = await this.findUserById(userHash[0].id);
                     return user[0];
                 }
                 catch (err) {
@@ -83,20 +79,11 @@ class UserService {
             } else {
                 return new Error('User not found');
             }
-
         }
         catch (err) {
             return new Error('Encounter an err when getting an entries')
         }
     }
-
-
-
-
-
-
-
-
 }
 
 export default UserService;

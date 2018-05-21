@@ -27,7 +27,6 @@ class UserRouter {
             try {
                 const user = await this.userService.userSignUp(name, email, password);
                 return res.json(user);
-
             }
             catch (err) {
                 console.log(err);
@@ -44,7 +43,6 @@ class UserRouter {
             try {
                 const user = await this.userService.userSignIn(email, password);
                 return res.json(user);
-
             }
             catch (err) {
                 return res.status(404).json(err);
@@ -58,7 +56,6 @@ class UserRouter {
         try {
             const user = await this.userService.findUserById(req.params.id);
             return res.json(user);
-
         }
         catch (err) {
             return res.status(404).json(err);
