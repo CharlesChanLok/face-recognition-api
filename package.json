@@ -4,32 +4,36 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --watch '**/*.ts' --exec 'ts-node' src/index.ts"
+    "start": "node build/index.js",
+    "build": "tsc",
+    "dev": "nodemon -L -e js,ts index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^2.0.1",
+    "@types/morgan": "^1.7.35",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
-    "clarifai": "^2.7.1",
-    "cors": "^2.8.4",
-    "dotenv": "^5.0.1",
-    "express": "^4.16.3",
-    "knex": "^0.14.6",
-    "pg": "^7.4.3"
+    "clarifai": "^2.9.0",
+    "cors": "^2.8.5",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "knex": "^0.16.3",
+    "morgan": "^1.9.1",
+    "pg": "^7.7.1"
   },
   "devDependencies": {
-    "@types/bcrypt": "^2.0.0",
-    "@types/bluebird": "^3.5.20",
+    "@types/bcryptjs": "^2.4.2",
     "@types/body-parser": "^1.17.0",
     "@types/cors": "^2.8.4",
-    "@types/dotenv": "^4.0.3",
-    "@types/express": "^4.11.1",
-    "@types/knex": "^0.14.14",
-    "@types/node": "^10.1.0",
-    "nodemon": "^1.17.4",
-    "ts-node": "^6.0.3",
-    "typescript": "^2.8.3"
+    "@types/dotenv": "^6.1.0",
+    "@types/express": "^4.16.0",
+    "@types/knex": "^0.15.1",
+    "@types/node": "^10.12.18",
+    "@types/pg": "^7.4.11",
+    "nodemon": "^1.18.9",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.2.2"
   }
 }

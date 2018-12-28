@@ -1,11 +1,5 @@
 import * as Knex from 'knex';
-import * as bcrypt from 'bcrypt';
-
-/**
-*   User Service
-*   Database queries 
-*   Tables : users | logins
-*/
+import * as bcrypt from 'bcryptjs';
 
 class UserService {
     constructor(private db: Knex) {

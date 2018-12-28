@@ -3,10 +3,11 @@ import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 import * as express from 'express';
 import * as knex from 'knex';
+import * as morgan from 'morgan';
 
-import UserRouter from './routers/UserRouter';
+import UserRouter from './routes/UserRouter';
 import UserService from './services/UserService';
-import ApiClarifaiRouter from './routers/ApiClarifaiRouter';
+import ApiClarifaiRouter from './routes/ApiClarifaiRouter';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ const pg = knex(knexfile);
 
 const app = express();
 
+app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
