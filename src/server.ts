@@ -6,7 +6,9 @@ import * as knex from 'knex';
 import * as morgan from 'morgan';
 
 import UserRouter from './routes/UserRouter';
+import ProfileRouter from './routes/ProfileRouter';
 import UserService from './services/UserService';
+import ProfileService from './services/ProfileService';
 import ApiClarifaiRouter from './routes/ApiClarifaiRouter';
 
 dotenv.config();
@@ -25,12 +27,15 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const userService = new UserService(pg);
+const profileService = new ProfileService(pg);
 
 const userRouter = new UserRouter(userService);
+const profileRouter = new ProfileRouter(profileService);
 const apiClarifaiRouter = new ApiClarifaiRouter();
 
 app.get('/', (req, res) => res.send('running'));
 app.use('/users', userRouter.getRouter());
+app.use('/profile', profileRouter.getRouter());
 app.use('/api/clarifai', apiClarifaiRouter.getRouter());
 
 //Error handler

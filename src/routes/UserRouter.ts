@@ -21,7 +21,6 @@ class UserRouter {
     const router = express.Router();
     router.post("/signin", this.handleSignIn);
     router.post("/signup", this.handleSignUp);
-    router.get("/profile/:id", this.handleUserProfile);
     router.put("/image", this.handleImage);
     return router;
   };
@@ -55,14 +54,6 @@ class UserRouter {
     }
   };
 
-  handleUserProfile = async (req: Request, res: Response) => {
-    try {
-      const user = await this.userService.findUserById(req.params.id);
-      return res.json(user);
-    } catch (err) {
-      return res.status(404).json(err);
-    }
-  };
   handleImage = async (req: Request, res: Response) => {
     const { id } = req.body;
     try {
