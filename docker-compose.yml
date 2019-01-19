@@ -16,8 +16,14 @@ services:
     working_dir: /home/node/face-recognition-api
     environment:
       POSTGRES_URL: ${POSTGRES_URL_API}
+      REDIS_URL: ${REDIS_URL}
     command: npm run dev
     ports: 
       - "3000:3000"
     volumes:
       - ./:/home/node/face-recognition-api
+  redis:
+    restart: always
+    image: redis
+    ports:
+      - "6379:6379"

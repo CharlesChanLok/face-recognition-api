@@ -1,16 +1,22 @@
-import ProfileService from "../services/ProfileService";
 import * as express from "express";
 import { Request, Response } from "express";
 
+import ProfileService from "../services/ProfileService";
+import Authorization from "middlewares/authorization";
+
 class ProfileRouter {
-  constructor(private profileService: ProfileService) {
+  constructor(
+    private profileService: ProfileService,
+    private authorization: Authorization,
+  ) {
     this.profileService = profileService;
+    this.authorization = authorization;
   }
 
   getRouter = () => {
     const router = express.Router();
-    router.get("/:id", this.handleProfile);
-    router.put("/:id", this.handleProfileUpdate);
+    router.get("/:id", this.authorization.isAuthorized, this.handleProfile);
+    router.put("/:id", this.authorization.isAuthorized, this.handleProfileUpdate);
     return router;
   };
 
@@ -18,7 +24,7 @@ class ProfileRouter {
     try {
       const user = await this.profileService.getProfile(req.params.id);
       if (user.length === 1) {
-        return res.json(user);
+        return res.json(user[0]);
       } else {
         return res.status(404).json("not found");
       }

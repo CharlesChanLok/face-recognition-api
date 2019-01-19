@@ -1,9 +1,13 @@
 import * as Knex from "knex";
 import * as bcrypt from "bcryptjs";
+import * as jwt from "jsonwebtoken";
+
+import { RedisClient } from "redis";
 
 class UserService {
-  constructor(private db: Knex) {
+  constructor(private db: Knex, private redis: RedisClient) {
     this.db = db;
+    this.redis = redis;
   }
 
   private saltRounds = 10;
@@ -52,15 +56,15 @@ class UserService {
           const user = await this.findUserById(userHash[0].id);
           return user[0];
         } catch (err) {
-          return new Error("Error occured when getting an user");
+          return Promise.reject("Error occured when getting an user");
         }
       } else {
-        return new Error(
+        return Promise.reject(
           "Failed to sign in, please provide a valid email or password"
         );
       }
     } catch (err) {
-      return err;
+      return Promise.reject(err);
     }
   };
 
@@ -78,6 +82,28 @@ class UserService {
     } catch (err) {
       return new Error("Encounter an err when getting an entries");
     }
+  };
+
+  signToken = (email: string) => {
+    const jwtPayload = { email };
+    return jwt.sign(jwtPayload, <string>process.env.JWT_SECRET, {
+      expiresIn: "2 days"
+    });
+  };
+
+  createSession = (user: { id: string, email: string }) => {
+    const { id, email } = user;
+    const token = this.signToken(email);
+
+    return this.setToken(token, id)
+      .then(() => {
+        return { success: "true", userId: id, token: token };
+      })
+      .catch(console.log);
+  };
+
+  setToken = (token: string, id: string) => {
+    return Promise.resolve(this.redis.set(token, id));
   };
 }
 

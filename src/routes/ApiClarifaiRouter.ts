@@ -1,8 +1,8 @@
-import * as dotenv from "dotenv";
-dotenv.config();
-
 import * as express from "express";
+
 import { Request, Response } from "express";
+
+import Authorization from "middlewares/authorization";
 
 /* Face detection API */
 const Clarifai = require("clarifai");
@@ -10,7 +10,9 @@ const Clarifai = require("clarifai");
 const { CLARIFAI_API_KEY } = process.env;
 
 class ApiClarifaiRouter {
-  constructor() {}
+  constructor(private authorization: Authorization) {
+    this.authorization = authorization;
+  }
 
   private app = new Clarifai.App({
     apiKey: CLARIFAI_API_KEY
@@ -18,7 +20,7 @@ class ApiClarifaiRouter {
 
   getRouter = () => {
     const router = express.Router();
-    router.post("/facedetection", this.handleFaceDetectionCall);
+    router.post("/facedetection", this.authorization.isAuthorized, this.handleFaceDetectionCall);
     return router;
   };
 

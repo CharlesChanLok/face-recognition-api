@@ -4,24 +4,28 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node build/index.js",
+    "start": "node --require dotenv/config build/index.js",
     "build": "tsc",
-    "dev": "nodemon -L -e js,ts index.js"
+    "dev": "nodemon --require dotenv/config -L -e js,ts index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/jsonwebtoken": "^8.3.0",
     "@types/morgan": "^1.7.35",
+    "@types/redis": "^2.8.10",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "clarifai": "^2.9.0",
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
     "knex": "^0.16.3",
     "morgan": "^1.9.1",
-    "pg": "^7.7.1"
+    "pg": "^7.7.1",
+    "redis": "^2.8.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",

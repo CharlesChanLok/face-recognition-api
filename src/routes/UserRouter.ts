@@ -1,10 +1,20 @@
-import UserService from "../services/UserService";
 import * as express from "express";
+
 import { Request, Response } from "express";
 
+import UserService from "../services/UserService";
+import { RedisClient } from "redis";
+import Authorization from "middlewares/authorization";
+
 class UserRouter {
-  constructor(private userService: UserService) {
+  constructor(
+    private userService: UserService,
+    private authorization: Authorization,
+    private redis: RedisClient
+  ) {
     this.userService = userService;
+    this.authorization = authorization;
+    this.redis = redis;
   }
 
   private isValidPassword = (pass: string) => {
@@ -19,9 +29,10 @@ class UserRouter {
 
   getRouter = () => {
     const router = express.Router();
-    router.post("/signin", this.handleSignIn);
+    // router.post("/signin", this.handleSignIn);
+    router.post("/signin", this.signInAuthentication);
     router.post("/signup", this.handleSignUp);
-    router.put("/image", this.handleImage);
+    router.put("/image", this.authorization.isAuthorized, this.handleImage);
     return router;
   };
 
@@ -32,7 +43,6 @@ class UserRouter {
         const user = await this.userService.userSignUp(name, email, password);
         return res.json(user);
       } catch (err) {
-        console.log(err);
         return res.status(404).json(err);
       }
     } else {
@@ -45,12 +55,12 @@ class UserRouter {
     if (email && password) {
       try {
         const user = await this.userService.userSignIn(email, password);
-        return res.json(user);
+        return user;
       } catch (err) {
-        return res.status(404).json(err);
+        return Promise.reject(err);
       }
     } else {
-      return res.status(400).json("Please provide a valid credentials");
+      return Promise.reject("Please provide a valid credentials");
     }
   };
 
@@ -62,6 +72,31 @@ class UserRouter {
     } catch (err) {
       return res.status(404).json(err);
     }
+  };
+
+  getAuthTokenId = (req: Request, res: Response) => {
+    const { authorization } = req.headers;
+    return this.redis.get(<string>authorization, (err, reply) => {
+      if (err || !reply) {
+        return res.status(401).json("Unauthorized");
+      } else {
+        return res.json({ id: reply });
+      }
+    });
+  };
+
+  signInAuthentication = (req: Request, res: Response) => {
+    const { authorization } = req.headers;
+    return authorization
+      ? this.getAuthTokenId(req, res)
+      : this.handleSignIn(req, res)
+          .then((data) => {
+            return data.id && data.email
+              ? this.userService.createSession(data)
+              : Promise.reject("err");
+          })
+          .then((session) => res.json(session))
+          .catch((err) => res.status(400).json(err));
   };
 }
 
