@@ -11,10 +11,10 @@ class ProfileService {
       .where({ id });
   };
 
-  updateProfile = (id: string, name: string) => {
+  updateProfile = (id: string, name: string, age: string, pet: string) => {
     return this.db("users")
       .where({ id })
-      .update({ name });
+      .update({ name, age, pet });
   };
 }
 

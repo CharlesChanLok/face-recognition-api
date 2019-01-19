@@ -7,11 +7,7 @@ import { RedisClient } from "redis";
 import Authorization from "middlewares/authorization";
 
 class UserRouter {
-  constructor(
-    private userService: UserService,
-    private authorization: Authorization,
-    private redis: RedisClient
-  ) {
+  constructor(private userService: UserService, private authorization: Authorization, private redis: RedisClient) {
     this.userService = userService;
     this.authorization = authorization;
     this.redis = redis;
@@ -90,13 +86,13 @@ class UserRouter {
     return authorization
       ? this.getAuthTokenId(req, res)
       : this.handleSignIn(req, res)
-          .then((data) => {
-            return data.id && data.email
-              ? this.userService.createSession(data)
-              : Promise.reject("err");
-          })
-          .then((session) => res.json(session))
-          .catch((err) => res.status(400).json(err));
+        .then((data) => {
+          return data.id && data.email
+            ? this.userService.createSession(data)
+            : Promise.reject("err");
+        })
+        .then((session) => res.json(session))
+        .catch((err) => res.status(400).json(err));
   };
 }
 
