@@ -12,6 +12,16 @@ class UserService {
 
   private saltRounds = 10;
 
+  private isValidPassword = (pass: string) => {
+    return pass.length >= 8 && pass.length <= 64;
+  };
+
+  private isValidEmail = (email: string) => {
+    return /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+      email
+    );
+  };
+
   findUserById = (id: string) => {
     return this.db("users")
       .select("*")
@@ -19,29 +29,34 @@ class UserService {
   };
 
   userSignUp = (name: string, email: string, password: string) => {
-    return this.db
-      .transaction(async (trx) => {
-        try {
-          const hash = await bcrypt.hash(password, this.saltRounds);
-          const user = await trx
-            .insert({
-              name: name,
-              email: email
-            })
-            .into("users")
-            .returning("*");
-          const login = await trx("logins").insert({
-            hash: hash,
-            user_id: user[0].id
-          });
-          return user[0];
-        } catch (err) {
-          return new Error(err);
-        }
-      })
-      .catch((err) => {
-        return err;
-      });
+    if (name && this.isValidEmail(email) && this.isValidPassword(password)) {
+      return this.db
+        .transaction(async (trx) => {
+          try {
+            const hash = await bcrypt.hash(password, this.saltRounds);
+            const user = await trx
+              .insert({
+                name: name,
+                email: email
+              })
+              .into("users")
+              .returning("*");
+            const login = await trx("logins").insert({
+              hash: hash,
+              user_id: user[0].id
+            });
+            return user[0];
+          } catch (err) {
+            return Promise.reject(err)
+          }
+        })
+        .catch((err) => {
+          return err;
+        });
+    } else {
+      return Promise.reject("Error occured when signing up");
+    }
+
   };
 
   userSignIn = async (email: string, password: string) => {

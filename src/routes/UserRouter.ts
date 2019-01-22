@@ -13,15 +13,6 @@ class UserRouter {
     this.redis = redis;
   }
 
-  private isValidPassword = (pass: string) => {
-    return pass.length >= 8 && pass.length <= 64;
-  };
-
-  private isValidEmail = (email: string) => {
-    return /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-      email
-    );
-  };
 
   getRouter = () => {
     const router = express.Router();
@@ -34,21 +25,16 @@ class UserRouter {
 
   handleSignUp = async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
-    if (name && this.isValidEmail(email) && this.isValidPassword(password)) {
-      try {
-        const user = await this.userService.userSignUp(name, email, password);
-        if (user.id && user.email) {
-          const session = await this.userService.createSession(user);
-          console.log(session, " ", user);
-          return res.json(session);
-        } else {
-          Promise.reject("error occured when creating a token on sign up")
-        }
-      } catch (err) {
-        return res.status(404).json(err);
+    try {
+      const user = await this.userService.userSignUp(name, email, password);
+      if (user.id && user.email) {
+        const session = await this.userService.createSession(user);
+        return res.json(session);
+      } else {
+        return Promise.reject("error occured when creating a token on sign up")
       }
-    } else {
-      return res.status(400).json("Error occured when signing up");
+    } catch (err) {
+      return res.status(400).json(err);
     }
   };
 
