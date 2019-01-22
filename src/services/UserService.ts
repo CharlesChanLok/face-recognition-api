@@ -105,6 +105,10 @@ class UserService {
   setToken = (token: string, id: string) => {
     return Promise.resolve(this.redis.set(token, id));
   };
+
+  removeToken = (token: string) => {
+    return Promise.resolve(this.redis.del(token));
+  }
 }
 
 export default UserService;

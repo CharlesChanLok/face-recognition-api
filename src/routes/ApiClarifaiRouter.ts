@@ -2,7 +2,7 @@ import * as express from "express";
 
 import { Request, Response } from "express";
 
-import Authorization from "middlewares/authorization";
+import Authorization from "middlewares/Authorization";
 
 /* Face detection API */
 const Clarifai = require("clarifai");

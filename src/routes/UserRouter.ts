@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 
 import UserService from "../services/UserService";
 import { RedisClient } from "redis";
-import Authorization from "middlewares/authorization";
+import Authorization from "middlewares/Authorization";
 
 class UserRouter {
   constructor(private userService: UserService, private authorization: Authorization, private redis: RedisClient) {
@@ -25,7 +25,7 @@ class UserRouter {
 
   getRouter = () => {
     const router = express.Router();
-    // router.post("/signin", this.handleSignIn);
+    router.get("/signout", this.handleSignOut);
     router.post("/signin", this.signInAuthentication);
     router.post("/signup", this.handleSignUp);
     router.put("/image", this.authorization.isAuthorized, this.handleImage);
@@ -59,6 +59,20 @@ class UserRouter {
       return Promise.reject("Please provide a valid credentials");
     }
   };
+
+  handleSignOut = async (req: Request, res: Response) => {
+    try {
+      const { authorization } = req.headers;
+      const reply = await this.userService.removeToken(<string>authorization);
+      if (reply) {
+        res.json("success");
+      } else {
+        res.json("error occured when signing out");
+      }
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  }
 
   handleImage = async (req: Request, res: Response) => {
     const { id } = req.body;

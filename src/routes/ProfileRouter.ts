@@ -2,7 +2,7 @@ import * as express from "express";
 import { Request, Response } from "express";
 
 import ProfileService from "../services/ProfileService";
-import Authorization from "middlewares/authorization";
+import Authorization from "middlewares/Authorization";
 
 class ProfileRouter {
   constructor(private profileService: ProfileService, private authorization: Authorization) {

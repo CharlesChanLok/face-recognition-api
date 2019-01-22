@@ -12,7 +12,7 @@ import ApiClarifaiRouter from "./routes/ApiClarifaiRouter";
 import UserService from "./services/UserService";
 import ProfileService from "./services/ProfileService";
 
-import Authorization from "./middlewares/authorization";
+import Authorization from "./middlewares/Authorization";
 
 const NODE_ENV = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 8080;
