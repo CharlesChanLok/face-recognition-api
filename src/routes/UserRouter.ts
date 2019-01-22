@@ -37,12 +37,18 @@ class UserRouter {
     if (name && this.isValidEmail(email) && this.isValidPassword(password)) {
       try {
         const user = await this.userService.userSignUp(name, email, password);
-        return res.json(user);
+        if (user.id && user.email) {
+          const session = await this.userService.createSession(user);
+          console.log(session, " ", user);
+          return res.json(session);
+        } else {
+          Promise.reject("error occured when creating a token on sign up")
+        }
       } catch (err) {
         return res.status(404).json(err);
       }
     } else {
-      return res.status(400).json("Please provide a valid credentials");
+      return res.status(400).json("Error occured when signing up");
     }
   };
 
